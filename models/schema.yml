@@ -1,0 +1,36 @@
+version: 2
+
+sources: 
+   - name: raw
+     schema : gz_raw_data
+     tables:
+      - name: sales
+        identifier: raw_gz_sales
+        description: table des ventes 
+        tests:
+          - unique:
+              column_name : "(orders_id || '-' || pdt_id)"
+
+        loaded_at_field: "CAST(date_date AS TIMESTAMP)"
+        freshness:
+          warn_after: { count : 90, period : day }
+        columns:
+           - name: date_date
+             description: date of purchase        
+      - name: product
+        identifier: raw_gz_product
+        description: products_id PK / purchase_price
+        columns:
+            - name: products_id
+              tests:
+                - unique
+                - not_null
+      - name: ship
+        identifier: raw_gz_ship
+        description: orders_id / Shipping_fee / log_cost /ship_cost
+        columns:
+            - name : orders_id
+              tests : 
+                - unique
+
+
